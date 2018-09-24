@@ -1,0 +1,27 @@
+Here is the specification of the chain files.
+
+The first line of each file contains the sha3-512 hash of that file, excluding the hash line. This is to check for validity when looking for peers.
+
+The second line of each file is the version number of the file. Clients will not accept version numbers that are multiple versions in the future.
+
+Each version number is a separate file, a separate "entry".
+
+File 1: The User Index
+===
+These are the `users.<version number>` file. It contains a single entry:
+
+    <sha3-512 hash>
+    <version number>
+    <nickname>
+    <local ip>
+    <port>
+    <public key>
+
+File 2: The Message Chain
+===
+These are the `messages.<version number>` file. It contains a single entry:
+
+    <sha3-512 hash>
+    <version number>
+    <public key recipient>\t<public key recipient>\t...
+    <encrypted message (output from gpg), beginning with ---BEGIN PGP MESSAGE--- and continuing through the end of the file>

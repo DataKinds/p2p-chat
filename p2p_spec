@@ -1,0 +1,113 @@
+The application will spin up a thread which constantly listens
+on a port specified by the user. It will send an `ANNOUNCE`
+request to every IP it has in the user cache if this is the
+first time the application started.
+
+Every request is prepended with a sha3-512 hash of the
+rest of the file. If the sha3 hash doesn't match
+up with the request body, it is discarded.
+
+Requests:
+
+`ANNOUNCE` request
+===
+Format:
+
+    ANNOUNCE
+    <nickname>
+    <local ip>
+    <port>
+    <public key>
+
+NOTE: `ANNOUNCE` requests cannot be verified, but it is unlikely
+that bad actors would be able to take advantage of spoofing
+`ANNOUNCE` requests.
+
+Expected result: Recipient will add user to their `users` chain.
+All users in their `users` chain will be `ANNOUNCE`d.
+
+
+`ASK_UPDATE_USERS` request
+===
+Format:
+
+    ASK_UPDATE_USERS
+    <my newest users version>
+
+Expected result: Recipient will send back an `UPDATE_USERS` request.
+
+
+`UPDATE_USERS` request
+===
+Format:
+
+    UPDATE_USERS
+    <the lower version that came with the request>
+    <the next version if it exists, else the same version>
+    <the entire next user file if it exists>
+
+Expected result: Recipient will add the user to their
+`users` chain.
+
+
+`ASK_UPDATE_MESSAGES` request
+===
+Format:
+
+    ASK_UPDATE_MESSAGES
+    <my newest messages version>
+
+Expected result: Recipient will send back an `UPDATE_MESSAGES` request.
+
+
+`UPDATE_MESSAGES` request
+===
+Format:
+
+    UPDATE_MESSAGES
+    <the lower version that came with the request>
+    <the next version if it exists, else the same version>
+    <the entire next message file if it exists>
+
+NOTE: Sending a message is simply sending an `UPDATE_MESSAGES`
+request to every user in your chain with a newer version.
+
+Expected result: Recipient will add the message to their
+`messages` chain, and serve it when `ASK`ed.
+
+
+These next two requests are for checking the hashes of
+certain users and messages, to ensure the atomicity of
+the network:
+
+
+`ASK_MESSAGE_HASH` request
+===
+Format:
+
+    ASK_MESSAGE_HASH
+    <message version>
+
+
+`MESSAGE_HASH` request
+===
+Format:
+
+    MESSAGE_HASH
+    <message hash>
+
+
+`ASK_USER_HASH` request
+===
+Format:
+
+    ASK_USER_HASH
+    <user version>
+
+
+`USER_HASH` request
+===
+Format:
+
+    USER_HASH
+    <user hash>
